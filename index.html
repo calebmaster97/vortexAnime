@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>AniSync – Anime Browser</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<style>
+:root {
+  --bg: #0d0f14;
+  --card: rgba(255, 255, 255, 0.05);
+  --glass: rgba(255, 255, 255, 0.06);
+  --border: rgba(255, 255, 255, 0.15);
+  --text: #f3f6fa;
+  --muted: #9ca7b8;
+  --accent: #7aa2ff;
+  --accent2: #8bd8ff;
+  --round: 14px;
+  --blur: 18px;
+  --shadow: 0 0 25px rgba(0, 0, 0, 0.4);
+  --card-shadow: 0 8px 35px rgba(0, 0, 0, 0.45);
+}
+* {
+  box-sizing: border-box;
+  font-family: "Inter", Arial, sans-serif;
+}
+body {
+  margin: 0;
+  background: radial-gradient(circle at top, #151922, #0d0f14);
+  color: var(--text);
+}
+header {
+  text-align: center;
+  padding: 32px 10px;
+  background: linear-gradient(to bottom, #131722aa, #0d0f1400);
+  backdrop-filter: blur(10px);
+}
+header h1 {
+  font-size: 2.6rem;
+  margin: 0;
+  font-weight: 700;
+  background: linear-gradient(90deg, #7aa2ff, #8bd8ff);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+.controls {
+  display: flex;
+  gap: 12px;
+  padding: 18px;
+  flex-wrap: wrap;
+  justify-content: center;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(var(--blur));
+  border-radius: var(--round);
+  margin: 0 auto 18px auto;
+  width: clamp(260px, 95%, 1200px);
+  box-shadow: var(--shadow);
+}
+.controls select,
+.controls input,
+.controls button {
+  padding: 10px 14px;
+  border-radius: var(--round);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 0.95rem;
+  transition: 0.2s ease;
+}
+.controls select:focus,
+.controls input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+button {
+  cursor: pointer;
+  background: linear-gradient(135deg, #7aa2ff55, #8bd8ff33);
+}
+button:hover {
+  border-color: var(--accent2);
+  scale: 1.04;
+}
+.grid {
+  padding: 20px;
+  display: grid;
+  gap: 25px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  width: clamp(260px, 95%, 1400px);
+  margin: auto;
+}
+.card {
+  background: var(--card);
+  border-radius: var(--round);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  backdrop-filter: blur(var(--blur));
+  box-shadow: var(--card-shadow);
+  transition: 0.25s ease;
+}
+.card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.55);
+}
+.card img {
+  width: 100%;
+  display: block;
+  cursor: pointer; /* Make it look clickable */
+}
+.content {
+  padding: 12px;
+}
+.title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.meta {
+  color: var(--muted);
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+a:hover {
+  color: var(--accent2);
+}
+footer {
+  text-align: center;
+  padding: 20px;
+  color: var(--muted);
+  margin-top: 30px;
+}
+@media (max-width: 800px) {
+  header h1 { font-size: 2.2rem; }
+  .controls { padding: 14px; width: 98%; }
+  .controls select,
+  .controls input,
+  .controls button {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+  .grid {
+    padding: 10px;
+    gap: 18px;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+}
+@media (max-width: 480px) {
+  header h1 { font-size: 1.8rem; }
+  .grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>AniSync</h1>
+  <p>Auto‑updated using the AniList API</p>
+</header>
+<div class="controls">
+  <select id="year"></select>
+  <select id="season">
+    <option value="">All Seasons</option>
+    <option value="WINTER">Winter</option>
+    <option value="SPRING">Spring</option>
+    <option value="SUMMER">Summer</option>
+    <option value="FALL">Autumn</option>
+  </select>
+  <select id="sort">
+    <option value="date">Sort: Newest</option>
+    <option value="popularity">Sort: Popularity</option>
+    <option value="alpha">Sort: A–Z</option>
+  </select>
+  <input id="search" type="text" placeholder="Search anime…" />
+  <button id="refresh">Refresh</button>
+</div>
+<div id="grid" class="grid"></div>
+<footer>Data from AniList · Auto‑updates on page load</footer>
+<script>
+const grid = document.getElementById("grid");
+const yearSel = document.getElementById("year");
+const seasonSel = document.getElementById("season");
+const sortSel = document.getElementById("sort");
+const searchInput = document.getElementById("search");
+const refreshBtn = document.getElementById("refresh");
+
+let animeData = [];
+let debounceTimeout = null;
+
+/* Setup Years Dropdown */
+function setupYears() {
+  const CURRENT_YEAR = new Date().getFullYear();
+  let html = `<option value="">All Years</option>`;
+  for (let y = 1970; y <= CURRENT_YEAR + 1; y++) {
+    html += `<option value="${y}">${y}</option>`;
+  }
+  yearSel.innerHTML = html;
+}
+
+/* Show loading message */
+function showLoading(show) {
+  if (show) {
+    grid.innerHTML = "<p style='color:white'>Loading anime...</p>";
+  }
+}
+
+/* Fetch all anime with error handling */
+async function fetchAllAnime() {
+  showLoading(true);
+  grid.innerHTML = "";
+  animeData = [];
+  const perPage = 50;
+  const yearFilter = yearSel.value ? parseInt(yearSel.value) : null;
+  const seasonFilter = seasonSel.value || null;
+
+  async function loadPage(page) {
+    const query = `
+      query ($page:Int,$perPage:Int,$year:Int,$season:MediaSeason) {
+        Page(page:$page, perPage:$perPage) {
+          pageInfo { currentPage hasNextPage }
+          media(
+            type: ANIME,
+            seasonYear: $year,
+            season: $season,
+            sort: START_DATE_DESC
+          ) {
+            id
+            title { romaji english }
+            coverImage { large }
+            season
+            seasonYear
+            popularity
+            siteUrl
+          }
+        }
+      }
+    `;
+    const variables = {
+      page: page,
+      perPage,
+      year: yearFilter,
+      season: seasonFilter
+    };
+    try {
+      const res = await fetch("https://graphql.anilist.co", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json"
+        },
+        body: JSON.stringify({ query, variables })
+      });
+      if (!res.ok) throw new Error("Network response was not ok");
+      const json = await res.json();
+      if (json.errors) throw new Error(json.errors.map(e => e.message).join(", "));
+      animeData.push(...json.data.Page.media);
+      if (json.data.Page.pageInfo.hasNextPage) {
+        return loadPage(page + 1);
+      }
+    } catch (error) {
+      alert("Error fetching data: " + error.message);
+    }
+  }
+
+  await loadPage(1);
+  renderAnime();
+  showLoading(false);
+}
+
+/* Render anime grid with clickable images */
+function renderAnime() {
+  const search = searchInput.value.toLowerCase();
+  let filtered = animeData.filter(a =>
+    (a.title.english || "").toLowerCase().includes(search) ||
+    (a.title.romaji || "").toLowerCase().includes(search)
+  );
+
+  if (sortSel.value === "popularity") {
+    filtered.sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+  } else if (sortSel.value === "alpha") {
+    filtered.sort((a, b) =>
+      (a.title.english || a.title.romaji).localeCompare(
+        b.title.english || b.title.romaji
+      )
+    );
+  }
+
+  if (filtered.length === 0) {
+    grid.innerHTML = "<p style='color:white'>No anime found.</p>";
+    return;
+  }
+
+  // Make images clickable, linking to the site URL
+  grid.innerHTML = filtered.map(a => `
+    <div class="card">
+      <a href="${a.siteUrl}" target="_blank">
+        <img src="${a.coverImage.large}" alt="${a.title.english || a.title.romaji}">
+      </a>
+      <div class="content">
+        <div class="title">${a.title.english || a.title.romaji}</div>
+        <div class="meta">${a.season || "TBA"} ${a.seasonYear || ""}</div>
+        <a href="${a.siteUrl}" target="_blank">View on AniList</a>
+      </div>
+    </div>
+  `).join("");
+}
+
+/* Debounce search input for better performance */
+searchInput.addEventListener("input", () => {
+  clearTimeout(debounceTimeout);
+  debounceTimeout = setTimeout(renderAnime, 300);
+});
+
+yearSel.addEventListener("change", fetchAllAnime);
+seasonSel.addEventListener("change", fetchAllAnime);
+sortSel.addEventListener("change", renderAnime);
+refreshBtn.addEventListener("click", fetchAllAnime);
+
+/* Initialize */
+setupYears();
+fetchAllAnime();
+</script>
+</body>
+</html>
