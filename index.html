@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>VortexAnime – Complete Edition</title>
+<title>VortexAnime – Omni-Genre Edition</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <style>
@@ -62,7 +62,7 @@ button { cursor: pointer; font-weight: 700; background: rgba(255, 255, 255, 0.1)
 
 <header>
   <h1>VortexAnime</h1>
-  <p>Universal Discovery – 100% Genre Support</p>
+  <p>Universal Discovery – Full Genre Suite</p>
 </header>
 
 <div class="controls">
@@ -89,7 +89,6 @@ button { cursor: pointer; font-weight: 700; background: rgba(255, 255, 255, 0.1)
     <option value="Ecchi">Ecchi</option>
     <option value="Fantasy">Fantasy</option>
     <option value="Horror">Horror</option>
-    <option value="Isekai">Isekai</option>
     <option value="Mahou Shoujo">Magical Girl</option>
     <option value="Mecha">Mecha</option>
     <option value="Music">Music</option>
@@ -101,6 +100,7 @@ button { cursor: pointer; font-weight: 700; background: rgba(255, 255, 255, 0.1)
     <option value="Sports">Sports</option>
     <option value="Supernatural">Supernatural</option>
     <option value="Thriller">Thriller</option>
+    <option value="Isekai">Isekai</option>
   </select>
 
   <select id="year"></select>
@@ -121,8 +121,7 @@ button { cursor: pointer; font-weight: 700; background: rgba(255, 255, 255, 0.1)
 
   <button id="airingBtn" class="filter-btn">Airing</button>
   <button id="upcomingBtn" class="filter-btn">Upcoming</button>
-  <button id="clearBtn" style="background: rgba(255,255,255,0.05);">Reset</button>
-  <button id="randomBtn" style="background: var(--accent2); color:#000;">Surprise</button>
+  <button id="randomBtn" style="background: var(--accent2); color:#000;">Surprise Me</button>
 </div>
 
 <div id="grid" class="grid"></div>
@@ -137,14 +136,12 @@ button { cursor: pointer; font-weight: 700; background: rgba(255, 255, 255, 0.1)
   const searchInput = document.getElementById("search");
   const airingBtn = document.getElementById("airingBtn");
   const upcomingBtn = document.getElementById("upcomingBtn");
-  const clearBtn = document.getElementById("clearBtn");
   const randomBtn = document.getElementById("randomBtn");
   const modal = document.getElementById("modal");
 
   let currentStatus = undefined;
   let allAnimeData = [];
 
-  // Theme Persistence
   const savedTheme = localStorage.getItem('vortex-theme');
   if (savedTheme) { document.body.className = savedTheme; themeSelect.value = savedTheme; }
   themeSelect.onchange = () => { document.body.className = themeSelect.value; localStorage.setItem('vortex-theme', themeSelect.value); };
@@ -157,11 +154,10 @@ button { cursor: pointer; font-weight: 700; background: rgba(255, 255, 255, 0.1)
   }
 
   async function fetchAnime() {
-    grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; opacity: 0.5;'>Vortex Syncing...</p>";
+    grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; opacity: 0.5;'>Syncing Vortex...</p>";
     
     let selectedGenre = genreSel.value;
     let selectedTag = undefined;
-    // Isekai exists in the DB as a Tag, not a Genre
     if (selectedGenre === "Isekai") {
         selectedGenre = undefined;
         selectedTag = "Isekai";
@@ -198,9 +194,9 @@ button { cursor: pointer; font-weight: 700; background: rgba(255, 255, 255, 0.1)
 
   function renderCards(data) {
     grid.innerHTML = "";
-    if (data.length === 0) {
-      grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; opacity: 0.5;'>No anime found in this vortex.</p>";
-      return;
+    if (!data || data.length === 0) {
+        grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; opacity: 0.5;'>No results found.</p>";
+        return;
     }
     data.forEach((anime, i) => {
       const d = document.createElement("div");
@@ -220,7 +216,7 @@ button { cursor: pointer; font-weight: 700; background: rgba(255, 255, 255, 0.1)
       <span class="close-modal" onclick="closeModal()">&times;</span>
       <h2 style="color:var(--accent); margin-top:0;">${anime.title.english || anime.title.romaji}</h2>
       <p style="color:var(--muted)"><b>Studio:</b> ${studio} | <b>Rating:</b> ${anime.averageScore}%</p>
-      <div style="font-size:0.95rem; line-height:1.6; max-height:350px; overflow-y:auto; padding-right:10px;">${anime.description || "No description available."}</div>
+      <div style="font-size:0.95rem; line-height:1.6; max-height:350px; overflow-y:auto;">${anime.description || "No description."}</div>
       <br><a href="https://anilist.co/anime/${anime.id}" target="_blank" style="display:inline-block; background:var(--accent); color:#000; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:800;">OPEN ON ANILIST</a>
     `;
     modal.style.display = "flex";
@@ -228,16 +224,6 @@ button { cursor: pointer; font-weight: 700; background: rgba(255, 255, 255, 0.1)
 
   function closeModal() { modal.style.display = "none"; }
   window.onclick = (e) => { if (e.target == modal) closeModal(); };
-
-  clearBtn.onclick = () => {
-    searchInput.value = "";
-    genreSel.value = "";
-    yearSel.value = "";
-    seasonSel.value = "";
-    currentStatus = undefined;
-    updateBtnUI();
-    fetchAnime();
-  };
 
   randomBtn.onclick = () => { if (allAnimeData.length) showDetails(allAnimeData[Math.floor(Math.random() * allAnimeData.length)]); };
 
