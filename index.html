@@ -1,257 +1,358 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>VortexAnime – Omni-Genre Edition</title>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8" />
+    <title>VortexAnime – The Complete Infinite Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        :root {
+            --bg: #0d0f14; --card: rgba(255, 255, 255, 0.05); --glass: rgba(255, 255, 255, 0.08);
+            --border: rgba(255, 255, 255, 0.12); --text: #f3f6fa; --muted: #9ca7b8;
+            --accent: #7aa2ff; --accent2: #8bd8ff; --round: 16px; --blur: 20px;
+        }
 
-<style>
-:root {
-  --bg: #0d0f14;
-  --card: rgba(255, 255, 255, 0.05);
-  --glass: rgba(255, 255, 255, 0.08);
-  --border: rgba(255, 255, 255, 0.12);
-  --text: #f3f6fa;
-  --muted: #9ca7b8;
-  --accent: #7aa2ff;
-  --accent2: #8bd8ff;
-  --round: 16px;
-  --blur: 20px;
-}
+        /* --- ALL THEMES RESTORED --- */
+        body.theme-crimson { --bg: #0f0505; --accent: #ff4d4d; --accent2: #ff8080; --border: rgba(255, 77, 77, 0.25); }
+        body.theme-emerald { --bg: #050f0a; --accent: #4dff88; --accent2: #80ffaa; --border: rgba(77, 255, 136, 0.25); }
+        body.theme-midnight { --bg: #000; --card: #0a0a0a; --border: #333; --accent: #fff; --accent2: #999; }
+        body.theme-cyber { --bg: #0b0014; --accent: #ff00ff; --accent2: #f0ff00; --border: #ff00ff55; }
+        body.theme-sakura { --bg: #fff5f7; --accent: #ff85a1; --accent2: #fbb1bd; --text: #4a4a4a; --card: #ffffff; --border: #ffccd5; }
+        body.theme-gold { --bg: #0f0f0f; --accent: #d4af37; --accent2: #f9e29c; --border: #d4af3744; --card: #161616; }
+        body.theme-ocean { --bg: #001219; --accent: #00f5d4; --accent2: #00b4d8; --border: #00f5d433; }
+        body.theme-yandere { --bg: #120005; --accent: #960018; --accent2: #e60026; --text: #ffeef2; --border: #96001866; }
+        body.theme-synth { --bg: #1a0525; --accent: #ff00ff; --accent2: #00d4ff; --border: #ff00ff88; }
+        body.theme-dracula { --bg: #282a36; --accent: #bd93f9; --accent2: #ff79c6; --border: #6272a4; }
+        body.theme-manga { --bg: #f0f0e8; --text: #1a1a1a; --accent: #000; --accent2: #444; --card: #fff; --border: #000; --round: 0px; background-image: url('https://www.transparenttextures.com/patterns/paper.png'); }
 
-/* --- THEMES --- */
-body.theme-crimson { --bg: #0f0505; --accent: #ff4d4d; --accent2: #ff8080; --border: rgba(255, 77, 77, 0.25); }
-body.theme-emerald { --bg: #050f0a; --accent: #4dff88; --accent2: #80ffaa; --border: rgba(77, 255, 136, 0.25); }
-body.theme-midnight { --bg: #000; --card: #0a0a0a; --border: #333; --accent: #fff; --accent2: #999; }
-body.theme-cyber { --bg: #0b0014; --accent: #ff00ff; --accent2: #f0ff00; --border: #ff00ff55; }
-body.theme-sakura { --bg: #fff5f7; --accent: #ff85a1; --accent2: #fbb1bd; --text: #4a4a4a; --card: #ffffff; --border: #ffccd5; }
-body.theme-gold { --bg: #0f0f0f; --accent: #d4af37; --accent2: #f9e29c; --border: #d4af3744; --card: #161616; }
-body.theme-ocean { --bg: #001219; --accent: #00f5d4; --accent2: #00b4d8; --border: #00f5d433; }
-body.theme-yandere { --bg: #120005; --accent: #960018; --accent2: #e60026; --text: #ffeef2; --border: #96001866; }
+        * { box-sizing: border-box; font-family: "Inter", sans-serif; transition: 0.3s ease; }
+        body { margin: 0; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
 
-* { box-sizing: border-box; font-family: "Inter", sans-serif; transition: 0.3s ease; }
-body { margin: 0; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+        header { text-align: center; padding: 40px 20px; }
+        header h1 { font-size: clamp(2.5rem, 8vw, 4rem); margin: 0; font-weight: 900; background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; color: transparent; letter-spacing: -2px; }
 
-header { text-align: center; padding: 40px 20px; }
-header h1 { font-size: clamp(2.5rem, 8vw, 4rem); margin: 0; font-weight: 900; background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; color: transparent; letter-spacing: -2px; }
+        .main-layout { display: flex; gap: 20px; padding: 0 20px; max-width: 1800px; margin: auto; width: 100%; }
+        
+        /* FAVORITES SIDEBAR */
+        #favSidebar { width: 280px; background: var(--glass); border: 1px solid var(--border); border-radius: var(--round); padding: 20px; height: fit-content; position: sticky; top: 20px; display: none; max-height: 80vh; overflow-y: auto; }
+        #favSidebar.active { display: block; }
+        .fav-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 0.85rem; cursor: pointer; padding: 5px; border-radius: 8px; }
+        .fav-item:hover { background: rgba(255,255,255,0.05); }
+        .fav-item img { width: 45px; height: 60px; object-fit: cover; border-radius: 6px; }
 
-.controls {
-  display: flex; gap: 10px; padding: 20px; flex-wrap: wrap; justify-content: center;
-  background: var(--glass); border: 1px solid var(--border); backdrop-filter: blur(var(--blur));
-  border-radius: var(--round); margin: 0 auto 30px auto; width: clamp(280px, 95%, 1400px);
-}
-.controls select, .controls input, .controls button { padding: 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.07); border: 1px solid var(--border); color: var(--text); outline: none; font-size: 0.85rem; }
-.controls input { flex-grow: 2; min-width: 180px; }
-button { cursor: pointer; font-weight: 700; background: rgba(255, 255, 255, 0.1); }
-.filter-btn.active { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent); }
+        .content-area { flex-grow: 1; }
 
-.grid { padding: 20px; display: grid; gap: 25px; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); width: clamp(280px, 95%, 1600px); margin: auto; }
-.card { background: var(--card); border-radius: var(--round); border: 1px solid var(--border); overflow: hidden; cursor: pointer; animation: fadeIn 0.5s ease forwards; opacity: 0; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-.card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; }
-.content { padding: 15px; }
+        .controls {
+            display: flex; gap: 10px; padding: 20px; flex-wrap: wrap; justify-content: center;
+            background: var(--glass); border: 1px solid var(--border); backdrop-filter: blur(var(--blur));
+            border-radius: var(--round); margin-bottom: 30px;
+        }
+        .controls select, .controls input, .controls button { padding: 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.07); border: 1px solid var(--border); color: var(--text); outline: none; font-size: 0.85rem; }
+        .controls input { flex-grow: 1; min-width: 180px; }
+        
+        .filter-btn.active { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent); }
 
-.timer-tag { font-size: 0.7rem; font-weight: 800; color: #fff; background: var(--accent); padding: 4px 8px; border-radius: 6px; display: inline-block; margin-top: 8px; }
+        .grid { display: grid; gap: 25px; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+        .card { background: var(--card); border-radius: var(--round); border: 1px solid var(--border); overflow: hidden; cursor: pointer; position: relative; animation: fadeIn 0.5s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; }
+        .content { padding: 15px; }
+        .title { font-weight: 700; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .studio-tag { font-size: 0.7rem; color: var(--accent); margin-bottom: 5px; text-transform: uppercase; font-weight: 800; }
 
-#modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 9999; backdrop-filter: blur(15px); padding: 20px; }
-.modal-content { background: var(--bg); border: 1px solid var(--border); padding: 30px; border-radius: var(--round); width: 100%; max-width: 750px; position: relative; max-height: 90vh; overflow-y: auto; }
-.close-modal { position: absolute; top: 15px; right: 25px; font-size: 2.5rem; cursor: pointer; color: var(--muted); }
-</style>
+        .fav-btn { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.6); border: none; color: #fff; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; z-index: 5; backdrop-filter: blur(5px); }
+        .fav-btn.active { color: #ff4d4d; }
+
+        .timer-tag { font-size: 0.7rem; font-weight: 800; color: #fff; background: var(--accent); padding: 4px 8px; border-radius: 6px; margin-top: 8px; display: inline-block; }
+
+        #sentinel { height: 120px; display: flex; align-items: center; justify-content: center; width: 100%; font-weight: bold; opacity: 0.5; }
+        #backToTop { position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; border-radius: 50%; background: var(--accent); color: #000; border: none; cursor: pointer; display: none; z-index: 1000; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+
+        #modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 9999; backdrop-filter: blur(15px); padding: 20px; }
+        .modal-content { background: var(--bg); border: 1px solid var(--border); padding: 30px; border-radius: var(--round); width: 100%; max-width: 800px; position: relative; max-height: 90vh; overflow-y: auto; }
+        .close-modal { position: absolute; top: 10px; right: 20px; font-size: 2.5rem; cursor: pointer; color: var(--muted); }
+        .trailer-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; margin-bottom: 20px; background: #000; border: 1px solid var(--border); }
+        .trailer-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+    </style>
 </head>
 <body>
 
 <header>
-  <h1>VortexAnime</h1>
-  <p>Universal Discovery – Full Genre Suite</p>
+    <h1 id="vortexTitle">VortexAnime</h1>
+    <p id="vortexSubtitle">Universal Discovery – Infinite Stream</p>
 </header>
 
-<div class="controls">
-  <select id="themeSelect">
-    <option value="">Vortex (Blue)</option>
-    <option value="theme-crimson">Crimson (Red)</option>
-    <option value="theme-emerald">Emerald (Green)</option>
-    <option value="theme-midnight">Midnight (OLED)</option>
-    <option value="theme-cyber">Cyberpunk (Neon)</option>
-    <option value="theme-sakura">Sakura (Soft)</option>
-    <option value="theme-gold">Luxury (Gold)</option>
-    <option value="theme-ocean">Deep Sea (Teal)</option>
-    <option value="theme-yandere">Obsession (Yandere)</option>
-  </select>
+<div class="main-layout">
+    <aside id="favSidebar">
+        <h3 style="margin-top:0; color:var(--accent);">❤ Favorites</h3>
+        <div id="favList"></div>
+    </aside>
 
-  <input id="search" type="text" placeholder="Search titles..." />
+    <div class="content-area">
+        <div class="controls">
+            <select id="themeSelect">
+                <option value="">Vortex (Blue)</option>
+                <option value="theme-manga">Manga Edition</option>
+                <option value="theme-synth">Synthwave</option>
+                <option value="theme-dracula">Dracula</option>
+                <option value="theme-cyber">Cyberpunk</option>
+                <option value="theme-sakura">Sakura</option>
+                <option value="theme-crimson">Crimson</option>
+                <option value="theme-gold">Luxury Gold</option>
+                <option value="theme-midnight">Midnight</option>
+            </select>
+            <button id="shuffleThemeBtn">🎨</button>
+            <input id="search" type="text" placeholder="Search titles..." />
+            <select id="genre">
+                <option value="">All Genres</option>
+                <option value="Action">Action</option>
+                <option value="Adventure">Adventure</option>
+                <option value="Comedy">Comedy</option>
+                <option value="Drama">Drama</option>
+                <option value="Ecchi">Ecchi</option>
+                <option value="Fantasy">Fantasy</option>
+                <option value="Horror">Horror</option>
+                <option value="Mahou Shoujo">Magical Girl</option>
+                <option value="Mecha">Mecha</option>
+                <option value="Music">Music</option>
+                <option value="Mystery">Mystery</option>
+                <option value="Psychological">Psychological</option>
+                <option value="Romance">Romance</option>
+                <option value="Sci-Fi">Sci-Fi</option>
+                <option value="Slice of Life">Slice of Life</option>
+                <option value="Sports">Sports</option>
+                <option value="Supernatural">Supernatural</option>
+                <option value="Thriller">Thriller</option>
+                <option value="Isekai">Isekai</option>
+            </select>
+            <select id="year"></select>
+            <select id="season">
+                <option value="">All Seasons</option>
+                <option value="WINTER">Winter</option>
+                <option value="SPRING">Spring</option>
+                <option value="SUMMER">Summer</option>
+                <option value="FALL">Fall</option>
+            </select>
+            <select id="sortSelect">
+                <option value="POPULARITY_DESC">Popular</option>
+                <option value="SCORE_DESC">Top Rated</option>
+                <option value="TRENDING_DESC">Trending</option>
+            </select>
+            <button id="airingBtn" class="filter-btn">Airing</button>
+            <button id="upcomingBtn" class="filter-btn">Upcoming</button>
+            <button id="randomBtn" style="background: var(--accent2); color:#000;">Surprise</button>
+        </div>
 
-  <select id="genre">
-    <option value="">All Genres</option>
-    <option value="Action">Action</option>
-    <option value="Adventure">Adventure</option>
-    <option value="Comedy">Comedy</option>
-    <option value="Drama">Drama</option>
-    <option value="Ecchi">Ecchi</option>
-    <option value="Fantasy">Fantasy</option>
-    <option value="Horror">Horror</option>
-    <option value="Mahou Shoujo">Magical Girl</option>
-    <option value="Mecha">Mecha</option>
-    <option value="Music">Music</option>
-    <option value="Mystery">Mystery</option>
-    <option value="Psychological">Psychological</option>
-    <option value="Romance">Romance</option>
-    <option value="Sci-Fi">Sci-Fi</option>
-    <option value="Slice of Life">Slice of Life</option>
-    <option value="Sports">Sports</option>
-    <option value="Supernatural">Supernatural</option>
-    <option value="Thriller">Thriller</option>
-    <option value="Isekai">Isekai</option>
-  </select>
-
-  <select id="year"></select>
-
-  <select id="season">
-    <option value="">All Seasons</option>
-    <option value="WINTER">Winter</option>
-    <option value="SPRING">Spring</option>
-    <option value="SUMMER">Summer</option>
-    <option value="FALL">Fall</option>
-  </select>
-
-  <select id="sortSelect">
-    <option value="POPULARITY_DESC">Popular</option>
-    <option value="SCORE_DESC">Top Rated</option>
-    <option value="TRENDING_DESC">Trending</option>
-  </select>
-
-  <button id="airingBtn" class="filter-btn">Airing</button>
-  <button id="upcomingBtn" class="filter-btn">Upcoming</button>
-  <button id="randomBtn" style="background: var(--accent2); color:#000;">Surprise Me</button>
+        <div id="grid" class="grid"></div>
+        <div id="sentinel">Syncing with the stream...</div>
+    </div>
 </div>
 
-<div id="grid" class="grid"></div>
+<button id="backToTop">↑</button>
 <div id="modal"><div class="modal-content" id="modalBody"></div></div>
 
 <script>
-  const grid = document.getElementById("grid");
-  const themeSelect = document.getElementById("themeSelect");
-  const yearSel = document.getElementById("year");
-  const seasonSel = document.getElementById("season");
-  const genreSel = document.getElementById("genre");
-  const searchInput = document.getElementById("search");
-  const airingBtn = document.getElementById("airingBtn");
-  const upcomingBtn = document.getElementById("upcomingBtn");
-  const randomBtn = document.getElementById("randomBtn");
-  const modal = document.getElementById("modal");
+    const grid = document.getElementById("grid");
+    const themeSelect = document.getElementById("themeSelect");
+    const shuffleBtn = document.getElementById("shuffleThemeBtn");
+    const yearSel = document.getElementById("year");
+    const seasonSel = document.getElementById("season");
+    const genreSel = document.getElementById("genre");
+    const sortSelect = document.getElementById("sortSelect");
+    const searchInput = document.getElementById("search");
+    const airingBtn = document.getElementById("airingBtn");
+    const upcomingBtn = document.getElementById("upcomingBtn");
+    const randomBtn = document.getElementById("randomBtn");
+    const modal = document.getElementById("modal");
+    const favList = document.getElementById("favList");
+    const favSidebar = document.getElementById("favSidebar");
+    const vortexTitle = document.getElementById("vortexTitle");
+    const backToTop = document.getElementById("backToTop");
 
-  let currentStatus = undefined;
-  let allAnimeData = [];
+    let currentStatus = undefined;
+    let allAnimeData = [];
+    let favorites = JSON.parse(localStorage.getItem('vortex-favs-final')) || [];
+    let currentPage = 1;
+    let hasNextPage = true;
+    let isLoading = false;
+    let mediaType = "ANIME";
 
-  const savedTheme = localStorage.getItem('vortex-theme');
-  if (savedTheme) { document.body.className = savedTheme; themeSelect.value = savedTheme; }
-  themeSelect.onchange = () => { document.body.className = themeSelect.value; localStorage.setItem('vortex-theme', themeSelect.value); };
-
-  function setupYears() {
-    const yNow = new Date().getFullYear();
-    let h = `<option value="">All Years</option>`;
-    for (let y = yNow + 1; y >= 1960; y--) h += `<option value="${y}">${y}</option>`;
-    yearSel.innerHTML = h;
-  }
-
-  async function fetchAnime() {
-    grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; opacity: 0.5;'>Syncing Vortex...</p>";
-    
-    let selectedGenre = genreSel.value;
-    let selectedTag = undefined;
-    if (selectedGenre === "Isekai") {
-        selectedGenre = undefined;
-        selectedTag = "Isekai";
+    // --- THEME ENGINE ---
+    function applyTheme(theme) {
+        document.body.className = theme;
+        localStorage.setItem('vortex-theme', theme);
+        mediaType = (theme === "theme-manga") ? "MANGA" : "ANIME";
+        vortexTitle.innerText = (theme === "theme-manga") ? "VortexManga" : "VortexAnime";
     }
+    const savedTheme = localStorage.getItem('vortex-theme');
+    if (savedTheme) { applyTheme(savedTheme); themeSelect.value = savedTheme; }
+    themeSelect.onchange = () => { applyTheme(themeSelect.value); fetchAnime(true); };
+    shuffleBtn.onclick = () => {
+        const options = Array.from(themeSelect.options);
+        const randomOpt = options[Math.floor(Math.random() * options.length)];
+        themeSelect.value = randomOpt.value;
+        applyTheme(randomOpt.value);
+        fetchAnime(true);
+    };
 
-    const query = `query ($search: String, $genre: String, $tag: String, $year: Int, $season: MediaSeason, $status: MediaStatus, $sort: [MediaSort]) {
-      Page(perPage: 32) {
-        media(search: $search, genre: $genre, tag: $tag, seasonYear: $year, season: $season, status: $status, type: ANIME, isAdult: false, sort: $sort) {
-          id title { english romaji } coverImage { extraLarge }
-          genres description averageScore
-          studios(isMain: true) { nodes { name } }
-          nextAiringEpisode { airingAt episode }
+    // --- INFINITE SCROLL ---
+    const observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isLoading) {
+            currentPage++;
+            fetchAnime(false);
         }
-      }
-    }`;
-    
-    const variables = { 
-      search: searchInput.value || undefined, 
-      genre: selectedGenre || undefined,
-      tag: selectedTag,
-      year: yearSel.value ? parseInt(yearSel.value) : undefined,
-      season: seasonSel.value || undefined,
-      status: currentStatus,
-      sort: [document.getElementById("sortSelect").value]
-    };
+    }, { threshold: 0.1, rootMargin: '400px' });
+    observer.observe(document.getElementById("sentinel"));
 
-    try {
-      const resp = await fetch('https://graphql.anilist.co', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query, variables }) });
-      const res = await resp.json();
-      allAnimeData = res.data.Page.media;
-      renderCards(allAnimeData);
-    } catch (err) { grid.innerHTML = "Sync Error."; }
-  }
+    async function fetchAnime(isNewSearch = true) {
+        if (isLoading) return;
+        isLoading = true;
+        if (isNewSearch) { currentPage = 1; grid.innerHTML = Array(12).fill('<div class="skeleton"></div>').join(''); }
 
-  function renderCards(data) {
-    grid.innerHTML = "";
-    if (!data || data.length === 0) {
-        grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; opacity: 0.5;'>No results found.</p>";
-        return;
+        let selectedGenre = genreSel.value, selectedTag = undefined;
+        if (selectedGenre === "Isekai") { selectedGenre = undefined; selectedTag = "Isekai"; }
+
+        const query = `query ($page: Int, $search: String, $genre: String, $tag: String, $year: Int, $season: MediaSeason, $status: MediaStatus, $type: MediaType, $sort: [MediaSort]) {
+          Page(page: $page, perPage: 32) {
+            pageInfo { hasNextPage }
+            media(search: $search, genre: $genre, tag: $tag, seasonYear: $year, season: $season, status: $status, type: $type, isAdult: false, sort: $sort) {
+              id title { english romaji } coverImage { extraLarge }
+              genres description averageScore chapters volumes
+              studios(isMain: true) { nodes { name } }
+              nextAiringEpisode { airingAt episode } trailer { id site }
+            }
+          }
+        }`;
+        
+        const variables = { 
+            page: currentPage, 
+            search: searchInput.value || undefined, 
+            genre: selectedGenre || undefined, 
+            tag: selectedTag, 
+            year: yearSel.value ? parseInt(yearSel.value) : undefined, 
+            season: seasonSel.value || undefined, 
+            status: currentStatus, 
+            type: mediaType,
+            sort: [sortSelect.value]
+        };
+
+        try {
+            const resp = await fetch('https://graphql.anilist.co', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query, variables }) });
+            const res = await resp.json();
+            const newData = res.data.Page.media;
+            hasNextPage = res.data.Page.pageInfo.hasNextPage;
+
+            if (isNewSearch) { allAnimeData = newData; grid.innerHTML = ""; }
+            else { allAnimeData = [...allAnimeData, ...newData]; }
+            renderCards(newData);
+        } catch (err) { console.error(err); } finally { isLoading = false; }
     }
-    data.forEach((anime, i) => {
-      const d = document.createElement("div");
-      d.className = "card";
-      d.style.animationDelay = `${i * 0.05}s`;
-      d.onclick = () => showDetails(anime);
-      let t = anime.nextAiringEpisode ? `<div class="timer-tag" data-time="${anime.nextAiringEpisode.airingAt}">Ep ${anime.nextAiringEpisode.episode}</div>` : "";
-      d.innerHTML = `<img src="${anime.coverImage.extraLarge}" loading="lazy"><div class="content"><div class="title">${anime.title.english || anime.title.romaji}</div><div style="font-size:0.75rem; opacity:0.7;">${anime.genres[0]} • ${anime.averageScore || '??'}%</div>${t}</div>`;
-      grid.appendChild(d);
-    });
-    startTimers();
-  }
 
-  function showDetails(anime) {
-    const studio = anime.studios.nodes[0] ? anime.studios.nodes[0].name : "Unknown";
-    document.getElementById("modalBody").innerHTML = `
-      <span class="close-modal" onclick="closeModal()">&times;</span>
-      <h2 style="color:var(--accent); margin-top:0;">${anime.title.english || anime.title.romaji}</h2>
-      <p style="color:var(--muted)"><b>Studio:</b> ${studio} | <b>Rating:</b> ${anime.averageScore}%</p>
-      <div style="font-size:0.95rem; line-height:1.6; max-height:350px; overflow-y:auto;">${anime.description || "No description."}</div>
-      <br><a href="https://anilist.co/anime/${anime.id}" target="_blank" style="display:inline-block; background:var(--accent); color:#000; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:800;">OPEN ON ANILIST</a>
-    `;
-    modal.style.display = "flex";
-  }
+    function renderCards(data) {
+        data.forEach(anime => {
+            const studio = anime.studios.nodes[0] ? anime.studios.nodes[0].name : "Unknown Staff";
+            const isFav = favorites.some(f => f.id === anime.id);
+            const d = document.createElement("div");
+            d.className = "card";
+            d.onclick = () => showDetails(anime);
+            
+            let tagHTML = "";
+            if (mediaType === "ANIME" && anime.nextAiringEpisode) {
+                tagHTML = `<div class="timer-tag" data-time="${anime.nextAiringEpisode.airingAt}">Ep ${anime.nextAiringEpisode.episode} Timer</div>`;
+            } else if (mediaType === "MANGA") {
+                const count = anime.chapters ? `${anime.chapters} Chs` : "Ongoing";
+                tagHTML = `<div class="timer-tag">${count}</div>`;
+            }
+            
+            d.innerHTML = `
+                <button class="fav-btn ${isFav?'active':''}" onclick="toggleFav(event, ${JSON.stringify(anime).replace(/"/g, '&quot;')})">❤</button>
+                <img src="${anime.coverImage.extraLarge}" loading="lazy">
+                <div class="content">
+                    <div class="studio-tag">${studio}</div>
+                    <div class="title">${anime.title.english || anime.title.romaji}</div>
+                    <div style="font-size:0.75rem; opacity:0.7;">${anime.genres[0]} • ${anime.averageScore || '??'}%</div>
+                    ${tagHTML}
+                </div>`;
+            grid.appendChild(d);
+        });
+        startTimers();
+        updateFavSidebar();
+    }
 
-  function closeModal() { modal.style.display = "none"; }
-  window.onclick = (e) => { if (e.target == modal) closeModal(); };
+    // --- COUNTDOWN TIMERS RESTORED ---
+    function startTimers() {
+        const upd = () => {
+            document.querySelectorAll('.timer-tag[data-time]').forEach(tag => {
+                const diff = parseInt(tag.dataset.time) - Math.floor(Date.now() / 1000);
+                if (diff > 0) {
+                    const d = Math.floor(diff / 86400), h = Math.floor((diff % 86400) / 3600), m = Math.floor((diff % 3600) / 60);
+                    tag.innerText = `Next: ${d}d ${h}h ${m}m`;
+                } else tag.innerText = "Aired!";
+            });
+        };
+        upd();
+        if (!window.timerInterval) window.timerInterval = setInterval(upd, 60000);
+    }
 
-  randomBtn.onclick = () => { if (allAnimeData.length) showDetails(allAnimeData[Math.floor(Math.random() * allAnimeData.length)]); };
+    // --- FAVORITES & SIDEBAR RESTORED ---
+    function toggleFav(e, anime) {
+        e.stopPropagation();
+        const index = favorites.findIndex(f => f.id === anime.id);
+        if (index > -1) favorites.splice(index, 1);
+        else favorites.push({id: anime.id, title: anime.title.english || anime.title.romaji, img: anime.coverImage.extraLarge, anime: anime});
+        localStorage.setItem('vortex-favs-final', JSON.stringify(favorites));
+        e.target.classList.toggle('active');
+        updateFavSidebar();
+    }
 
-  function startTimers() {
-    const upd = () => {
-      document.querySelectorAll('.timer-tag').forEach(tag => {
-        const diff = parseInt(tag.dataset.time) - Math.floor(Date.now() / 1000);
-        if (diff > 0) {
-          const d = Math.floor(diff / 86400), h = Math.floor((diff % 86400) / 3600), m = Math.floor((diff % 3600) / 60);
-          tag.innerText = `Next: ${d}d ${h}h ${m}m`;
-        } else tag.innerText = "Aired!";
-      });
-    };
-    upd(); setInterval(upd, 60000);
-  }
+    function updateFavSidebar() {
+        favSidebar.classList.toggle('active', favorites.length > 0);
+        favList.innerHTML = favorites.map(f => `
+            <div class="fav-item" onclick="showDetails(${JSON.stringify(f.anime).replace(/"/g, '&quot;')})">
+                <img src="${f.img}">
+                <span>${f.title}</span>
+            </div>
+        `).join('');
+    }
 
-  airingBtn.onclick = () => { currentStatus = (currentStatus === "RELEASING" ? undefined : "RELEASING"); updateBtnUI(); fetchAnime(); };
-  upcomingBtn.onclick = () => { currentStatus = (currentStatus === "NOT_YET_RELEASED" ? undefined : "NOT_YET_RELEASED"); updateBtnUI(); fetchAnime(); };
+    function showDetails(anime) {
+        const trailer = anime.trailer && anime.trailer.site === "youtube" ? 
+            `<div class="trailer-container"><iframe src="https://www.youtube.com/embed/${anime.trailer.id}" allowfullscreen></iframe></div>` : "";
+        document.getElementById("modalBody").innerHTML = `
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            ${trailer}
+            <h2 style="color:var(--accent); margin-top:0;">${anime.title.english || anime.title.romaji}</h2>
+            <p style="color:var(--muted)"><b>Rating:</b> ${anime.averageScore || '??'}% | <b>Type:</b> ${mediaType}</p>
+            <div style="font-size:0.95rem; line-height:1.6; max-height:250px; overflow-y:auto; padding-right:10px;">${anime.description || "No description available."}</div>
+            <div style="margin-top:20px; display:flex; gap:10px;">
+                <a href="https://anilist.co/${mediaType.toLowerCase()}/${anime.id}" target="_blank" style="flex:1; background:var(--accent); color:#000; padding:12px; border-radius:8px; text-decoration:none; font-weight:800; text-align:center;">VIEW ANILIST</a>
+                <button onclick="closeModal()" style="flex:1; background:var(--glass); border:1px solid var(--border); color:var(--text); cursor:pointer;">CLOSE</button>
+            </div>`;
+        modal.style.display = "flex";
+    }
+    function closeModal() { modal.style.display = "none"; }
 
-  function updateBtnUI() { 
-    airingBtn.classList.toggle("active", currentStatus === "RELEASING");
-    upcomingBtn.classList.toggle("active", currentStatus === "NOT_YET_RELEASED");
-  }
+    // --- BUTTON UI ---
+    airingBtn.onclick = () => { currentStatus = (currentStatus === "RELEASING" ? undefined : "RELEASING"); updateUI(); fetchAnime(true); };
+    upcomingBtn.onclick = () => { currentStatus = (currentStatus === "NOT_YET_RELEASED" ? undefined : "NOT_YET_RELEASED"); updateUI(); fetchAnime(true); };
+    function updateUI() {
+        airingBtn.classList.toggle("active", currentStatus === "RELEASING");
+        upcomingBtn.classList.toggle("active", currentStatus === "NOT_YET_RELEASED");
+    }
 
-  setupYears();
-  [genreSel, yearSel, seasonSel, document.getElementById("sortSelect")].forEach(el => el.onchange = fetchAnime);
-  searchInput.oninput = () => { clearTimeout(window.t); window.t = setTimeout(fetchAnime, 600); };
-  fetchAnime();
+    // --- SETUP CONTROLS ---
+    const yNow = new Date().getFullYear();
+    let yOpt = `<option value="">All Years</option>`;
+    for(let y=yNow+1; y>=1960; y--) yOpt += `<option value="${y}">${y}</option>`;
+    yearSel.innerHTML = yOpt;
+
+    [genreSel, yearSel, seasonSel, sortSelect].forEach(el => el.onchange = () => fetchAnime(true));
+    searchInput.oninput = () => { clearTimeout(window.t); window.t = setTimeout(() => fetchAnime(true), 600); };
+    randomBtn.onclick = () => { if(allAnimeData.length) showDetails(allAnimeData[Math.floor(Math.random()*allAnimeData.length)]); };
+    
+    window.onscroll = () => { backToTop.style.display = window.scrollY > 800 ? "block" : "none"; };
+    backToTop.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    fetchAnime();
 </script>
 </body>
 </html>
